@@ -42,6 +42,30 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 15),
+                  // Firebase Test Card (for development)
+                  _buildRoleCard(
+                    context,
+                    title: 'Firebase Test',
+                    description: 'Test Firebase connectivity and features',
+                    icon: Icons.cloud_outlined,
+                    color: Colors.blue.shade100,
+                    iconColor: Colors.blue.shade900,
+                    onTap: () => Navigator.pushNamed(context, '/firebase_test'),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Attendance Test Card (for development)
+                  _buildRoleCard(
+                    context,
+                    title: 'Attendance Test',
+                    description: 'Test Attendance System',
+                    icon: Icons.check_circle_outline,
+                    color: Colors.green.shade100,
+                    iconColor: Colors.green.shade900,
+                    onTap: () => Navigator.pushNamed(context, '/attendance_test'),
+                  ),
+                  const SizedBox(height: 16),
+                  
                   _buildRoleCard(
                     context,
                     title: 'Students',

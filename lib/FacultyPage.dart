@@ -6,28 +6,10 @@ class FacultyPage extends StatelessWidget {
   // Dummy faculty data
   final List<Map<String, String>> facultyMembers = const [
     {
-      'name': 'Dr. Alok Kumar',
+      'name': 'Dr. Sunil Upadhyay',
       'designation': 'Head of Department, Computer Science',
-      'email': 'alok.kumar@paramount.edu',
+      'email': 'sunil.upadhyay@paramount.edu',
       'image': 'assets/images/sunil.jpg', // Placeholder for a faculty image
-    },
-    {
-      'name': 'Prof. Priya Sharma',
-      'designation': 'Associate Professor, Electronics',
-      'email': 'priya.sharma@paramount.edu',
-      'image': 'assets/images/girl.png', // Placeholder for a faculty image
-    },
-    {
-      'name': 'Dr. Vikas Gupta',
-      'designation': 'Assistant Professor, Mechanical',
-      'email': 'vikas.gupta@paramount.edu',
-      'image': 'assets/images/sunil.jpg',
-    },
-    {
-      'name': 'Ms. Neha Singh',
-      'designation': 'Lecturer, Mathematics',
-      'email': 'neha.singh@paramount.edu',
-      'image': 'assets/images/girl.png',
     },
   ];
 

@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "409055933087",
-    "project_id": "paramount-classes-4fc15",
-    "storage_bucket": "paramount-classes-4fc15.firebasestorage.app"
+    "project_number": "572126760838",
+    "project_id": "paramountclasses-78104",
+    "storage_bucket": "paramountclasses-78104.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:409055933087:android:73379d5c12da73bf6868aa",
+        "mobilesdk_app_id": "1:572126760838:android:5415826b61c227b28de607",
         "android_client_info": {
           "package_name": "com.example.paramount"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC3TnuALtVryAroYmCMtS1I67u6WdlzDYc"
+          "current_key": "AIzaSyBU9L2TVjwqvd342KdhDGX_ueWtU_saiSI"
         }
       ],
       "services": {

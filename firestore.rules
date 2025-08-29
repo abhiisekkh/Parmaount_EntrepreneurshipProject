@@ -1,0 +1,22 @@
+{
+  "rules": {
+    "attendance": {
+      "$attendanceId": {
+        ".read": true,
+        ".write": true
+      }
+    },
+    "users": {
+      "$uid": {
+        ".read": true,
+        ".write": true
+      }
+    },
+    "test": {
+      "$docId": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}

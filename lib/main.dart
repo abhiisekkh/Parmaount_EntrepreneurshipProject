@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:paramount/splashscreen.dart'; // Aapke splash screen ko import kiya
 import 'package:paramount/HomePage.dart'; // General home page
 import 'package:paramount/StudentHomePage.dart'; // Student specific home page
@@ -7,9 +9,27 @@ import 'package:paramount/add_student_page.dart'; // Add student page
 import 'package:paramount/FacultyPage.dart'; // Faculty listing page (File name confirmed as 'FacultyPage.dart')
 import 'package:paramount/Attendance.dart'; // Teacher's attendance marking page
 import 'package:paramount/StudentAttendancePage.dart'; // Student's attendance view page
+import 'package:paramount/firebase_test_page.dart'; // Firebase test page
+import 'package:paramount/attendance_test_page.dart'; // Attendance test page
 
 // Main function jo app ko run karta hai
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp();
+    print('Firebase initialized successfully!');
+    
+    // Test Firestore connection
+    final firestore = FirebaseFirestore.instance;
+    await firestore.collection('test').doc('test').set({
+      'timestamp': DateTime.now().toString(),
+      'test': 'Firebase is working!'
+    });
+    print('Firestore test write successful!');
+    
+  } catch (e) {
+    print('Error: $e');
+  }
   runApp(const MyApp());
 }
 
@@ -316,6 +336,8 @@ class MyApp extends StatelessWidget {
             const FacultyPage(), // File name confirmed as 'FacultyPage.dart'
         '/attendance': (context) => const AttendancePage(),
         '/student_attendance': (context) => const StudentAttendancePage(),
+        '/firebase_test': (context) => const FirebaseTestPage(),
+        '/attendance_test': (context) => const AttendanceTestPage(),
       },
     );
   }
