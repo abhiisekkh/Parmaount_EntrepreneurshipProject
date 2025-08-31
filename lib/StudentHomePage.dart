@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'services/user_service.dart';
 
 class StudentHomePage extends StatelessWidget {
   const StudentHomePage({super.key});
@@ -24,9 +25,19 @@ class StudentHomePage extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () {
-              // Logout functionality: Navigate back to the main home page
-              Navigator.of(context).pushReplacementNamed('/home');
+            onPressed: () async {
+              try {
+                await UserService().signOut();
+                if (context.mounted) {
+                  Navigator.of(context).pushReplacementNamed('/auth');
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error signing out: $e')),
+                  );
+                }
+              }
             },
           ),
         ],

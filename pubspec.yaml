@@ -27,11 +27,11 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # Firebase dependencies - Backend services ke liye.
-  firebase_core: ^2.32.0 # Firebase core functionality
-  firebase_auth: ^4.15.3 # User authentication ke liye
-  cloud_firestore: ^4.13.6 # NoSQL database
-  firebase_messaging: ^14.7.10 # Push notifications ke liye
-  firebase_analytics: ^10.7.4 # App usage analytics ke liye
+  firebase_core: ^2.24.0  # Firebase core functionality
+  firebase_auth: ^4.15.0  # User authentication ke liye
+  cloud_firestore: ^4.13.3 # NoSQL database
+  firebase_messaging: ^14.7.6 # Push notifications ke liye
+  firebase_analytics: ^10.7.2 # App usage analytics ke liye
 
   # Cloudinary for file storage - Firebase Storage ki jagah.
   cloudinary_public: ^0.21.0 # Cloudinary API se interact karne ke liye

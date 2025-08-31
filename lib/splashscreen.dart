@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:async'; // Timer ke liye
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+import 'services/user_service.dart';
+import 'models/user_model.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,9 +28,30 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _controller.forward(); // Animation start kiya
 
-    // 3 seconds ke baad home page par navigate karega
+    // Check auth state after animation
     Timer(const Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacementNamed('/home');
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        UserService().getUserData(user.uid).then((userData) {
+          if (userData != null && mounted) {
+            switch (userData.role) {
+              case UserRole.student:
+                Navigator.of(context).pushReplacementNamed('/student_home');
+                break;
+              case UserRole.teacher:
+                Navigator.of(context).pushReplacementNamed('/teacher_home');
+                break;
+              case UserRole.admin:
+                Navigator.of(context).pushReplacementNamed('/teacher_home');
+                break;
+            }
+          } else if (mounted) {
+            Navigator.of(context).pushReplacementNamed('/auth');
+          }
+        });
+      } else if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/auth');
+      }
     });
   }
 

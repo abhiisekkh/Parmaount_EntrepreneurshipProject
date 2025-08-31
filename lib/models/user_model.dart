@@ -2,6 +2,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum UserRole { student, teacher, admin }
 
+extension UserRoleExtension on UserRole {
+  String toJson() => toString().split('.').last;
+  
+  static UserRole fromJson(String json) {
+    return UserRole.values.firstWhere(
+      (role) => role.toString().split('.').last == json,
+      orElse: () => UserRole.student,
+    );
+  }
+}
+
 class UserModel {
   final String uid;
   final String email;
@@ -47,43 +58,51 @@ class UserModel {
       'uid': uid,
       'email': email,
       'name': name,
-      'role': role.toString().split('.').last,
+      'role': role.toJson(),
       'phoneNumber': phoneNumber,
       'profileImageUrl': profileImageUrl,
-      'createdAt': createdAt,
-      'lastUpdated': lastUpdated,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'lastUpdated': Timestamp.fromDate(lastUpdated),
       'studentId': studentId,
       'course': course,
       'semester': semester,
-      'attendance': attendance,
+      'attendance': attendance ?? {},
       'teacherId': teacherId,
-      'subjectsTaught': subjectsTaught,
-      'classesAssigned': classesAssigned,
+      'subjectsTaught': subjectsTaught ?? [],
+      'classesAssigned': classesAssigned ?? [],
     };
   }
 
   // Create model from Firestore document
   factory UserModel.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    
     return UserModel(
       uid: doc.id,
-      email: data['email'] ?? '',
-      name: data['name'] ?? '',
-      role: UserRole.values.firstWhere(
-        (e) => e.toString().split('.').last == data['role'],
-        orElse: () => UserRole.student,
-      ),
-      phoneNumber: data['phoneNumber'],
-      profileImageUrl: data['profileImageUrl'],
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-      lastUpdated: (data['lastUpdated'] as Timestamp).toDate(),
-      studentId: data['studentId'],
-      course: data['course'],
-      semester: data['semester'],
-      attendance: data['attendance'],
-      teacherId: data['teacherId'],
-      subjectsTaught: List<String>.from(data['subjectsTaught'] ?? []),
-      classesAssigned: List<String>.from(data['classesAssigned'] ?? []),
+      email: data['email']?.toString() ?? '',
+      name: data['name']?.toString() ?? '',
+      role: data['role'] != null 
+          ? UserRoleExtension.fromJson(data['role'].toString())
+          : UserRole.student,
+      phoneNumber: data['phoneNumber']?.toString(),
+      profileImageUrl: data['profileImageUrl']?.toString(),
+      createdAt: data['createdAt'] != null 
+          ? (data['createdAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      lastUpdated: data['lastUpdated'] != null 
+          ? (data['lastUpdated'] as Timestamp).toDate()
+          : DateTime.now(),
+      studentId: data['studentId']?.toString(),
+      course: data['course']?.toString(),
+      semester: data['semester'] != null ? int.tryParse(data['semester'].toString()) : null,
+      attendance: data['attendance'] as Map<String, dynamic>?,
+      teacherId: data['teacherId']?.toString(),
+      subjectsTaught: data['subjectsTaught'] != null 
+          ? List<String>.from(data['subjectsTaught'])
+          : null,
+      classesAssigned: data['classesAssigned'] != null 
+          ? List<String>.from(data['classesAssigned'])
+          : null,
     );
   }
 

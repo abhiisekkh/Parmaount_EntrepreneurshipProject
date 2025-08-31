@@ -1,55 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:paramount/splashscreen.dart'; // Aapke splash screen ko import kiya
-import 'package:paramount/HomePage.dart'; // General home page
-import 'package:paramount/StudentHomePage.dart'; // Student specific home page
-import 'package:paramount/TeacherHomePage.dart'; // Teacher specific home page
-import 'package:paramount/add_student_page.dart'; // Add student page
-import 'package:paramount/FacultyPage.dart'; // Faculty listing page (File name confirmed as 'FacultyPage.dart')
-import 'package:paramount/Attendance.dart'; // Teacher's attendance marking page
-import 'package:paramount/StudentAttendancePage.dart'; // Student's attendance view page
-import 'package:paramount/firebase_test_page.dart'; // Firebase test page
-import 'package:paramount/attendance_test_page.dart'; // Attendance test page
+import 'package:paramount/HomePage.dart';
+import 'package:paramount/StudentHomePage.dart';
+import 'package:paramount/TeacherHomePage.dart';
+import 'package:paramount/add_student_page.dart';
+import 'package:paramount/FacultyPage.dart';
+import 'package:paramount/Attendance.dart';
+import 'package:paramount/StudentAttendancePage.dart';
+import 'package:paramount/student_list_page.dart';
+import 'package:paramount/auth/auth_page.dart';
+import 'package:paramount/admin_home.dart';
+import 'package:paramount/admin/admin_students_page.dart';
+import 'package:paramount/admin/admin_faculty_page.dart';
+import 'package:paramount/admin/admin_courses_page.dart';
 
-// Main function jo app ko run karta hai
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp();
-    print('Firebase initialized successfully!');
-    
-    // Test Firestore connection
-    final firestore = FirebaseFirestore.instance;
-    await firestore.collection('test').doc('test').set({
-      'timestamp': DateTime.now().toString(),
-      'test': 'Firebase is working!'
-    });
-    print('Firestore test write successful!');
-    
-  } catch (e) {
-    print('Error: $e');
-  }
+void main() {
   runApp(const MyApp());
 }
 
-// MyApp ek StatelessWidget hai kyunki ismein koi changeable state nahi hai
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Paramount Institute', // App ka title
-      debugShowCheckedModeBanner: false, // Debug banner ko remove kiya
+      title: 'Paramount Institute',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // Modern aur appealing color scheme
-        primarySwatch: Colors.deepPurple, // Primary color scheme deep purple
-        primaryColor: Colors.deepPurple.shade700, // Primary color
+        primarySwatch: Colors.deepPurple,
+        primaryColor: Colors.deepPurple.shade700,
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
-            .copyWith(
-                secondary: Colors.amberAccent
-                    .shade400), // Accent color amber, thoda shade specific
+            .copyWith(secondary: Colors.amberAccent.shade400),
 
         // Font Family ko 'Oswald' set kiya, jaisa ki pubspec.yaml mein define kiya hai
         fontFamily: 'Oswald',
@@ -325,19 +305,21 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // App ke sabhi routes define kiye hain
-      initialRoute: '/', // Splash screen initial route
+      initialRoute: '/home',
       routes: {
-        '/': (context) => const SplashScreen(),
         '/home': (context) => const HomePage(),
         '/student_home': (context) => const StudentHomePage(),
         '/teacher_home': (context) => const TeacherHomePage(),
         '/add_student': (context) => const AddStudentPage(),
-        '/faculty': (context) =>
-            const FacultyPage(), // File name confirmed as 'FacultyPage.dart'
+        '/student_list': (context) => const StudentListPage(),
+        '/faculty': (context) => const FacultyPage(),
         '/attendance': (context) => const AttendancePage(),
         '/student_attendance': (context) => const StudentAttendancePage(),
-        '/firebase_test': (context) => const FirebaseTestPage(),
-        '/attendance_test': (context) => const AttendanceTestPage(),
+        '/auth': (context) => const AuthPage(),
+        '/admin_home': (context) => const AdminHomePage(),
+        '/admin/students': (context) => const AdminStudentsPage(),
+        '/admin/faculty': (context) => const AdminFacultyPage(),
+        '/admin/courses': (context) => const AdminCoursesPage(),
       },
     );
   }

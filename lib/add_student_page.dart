@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'services/test_data_service.dart';
 
 class AddStudentPage extends StatefulWidget {
   const AddStudentPage({super.key});
@@ -20,35 +21,57 @@ class _AddStudentPageState extends State<AddStudentPage> {
   // Loading state ko dummy rakha gaya hai
   bool _isLoading = false;
 
-  // Ab yeh function sirf dummy logic dikhaega
+  final TestDataService _testDataService = TestDataService();
+
+  // Add student using TestDataService
   Future<void> _addStudent() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
 
-      // Backend call ko simulate karne ke liye dummy delay
-      await Future.delayed(const Duration(seconds: 2));
+      try {
+        // Generate a unique ID for the new student
+        String newId = (DateTime.now().millisecondsSinceEpoch % 10000).toString();
+        
+        _testDataService.addStudent({
+          'id': newId,
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'studentId': _usnController.text,
+          'phoneNumber': _phoneNumberController.text,
+          'course': _courseController.text,
+          'semester': int.tryParse(_semesterController.text),
+          'attendance': {},
+        });
 
-      // Dummy success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Dummy: Student "${_nameController.text}" added successfully!'),
-        ),
-      );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Student ${_nameController.text} added successfully!')),
+          );
 
-      // Fields ko clear karna
-      _nameController.clear();
-      _usnController.clear();
-      _emailController.clear();
-      _passwordController.clear();
-      _phoneNumberController.clear();
-      _courseController.clear();
-      _semesterController.clear();
-
-      setState(() {
-        _isLoading = false;
-      });
+          // Clear all fields after success
+          _nameController.clear();
+          _usnController.clear();
+          _emailController.clear();
+          _passwordController.clear();
+          _phoneNumberController.clear();
+          _courseController.clear();
+          _semesterController.clear();
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error adding student: $e')),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 

@@ -12,8 +12,8 @@ class HomePage extends StatelessWidget {
           // Login button
           TextButton.icon(
             onPressed: () {
-              // Yahan par login functionality add kar sakte hain
-              _showLoginDialog(context);
+              print('AppBar Login button pressed');
+              Navigator.of(context, rootNavigator: true).pushReplacementNamed('/auth');
             },
             icon: const Icon(Icons.login, color: Colors.white),
             label: const Text('Login', style: TextStyle(color: Colors.white, fontSize: 16)),
@@ -42,30 +42,6 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 15),
-                  // Firebase Test Card (for development)
-                  _buildRoleCard(
-                    context,
-                    title: 'Firebase Test',
-                    description: 'Test Firebase connectivity and features',
-                    icon: Icons.cloud_outlined,
-                    color: Colors.blue.shade100,
-                    iconColor: Colors.blue.shade900,
-                    onTap: () => Navigator.pushNamed(context, '/firebase_test'),
-                  ),
-                  const SizedBox(height: 16),
-                  
-                  // Attendance Test Card (for development)
-                  _buildRoleCard(
-                    context,
-                    title: 'Attendance Test',
-                    description: 'Test Attendance System',
-                    icon: Icons.check_circle_outline,
-                    color: Colors.green.shade100,
-                    iconColor: Colors.green.shade900,
-                    onTap: () => Navigator.pushNamed(context, '/attendance_test'),
-                  ),
-                  const SizedBox(height: 16),
-                  
                   _buildRoleCard(
                     context,
                     title: 'Students',
@@ -309,8 +285,9 @@ class HomePage extends StatelessWidget {
             icon: Icons.login,
             title: 'Login',
             onTap: () {
+              print('Drawer Login button pressed');
               Navigator.pop(context);
-              _showLoginDialog(context);
+              Navigator.of(context, rootNavigator: true).pushReplacementNamed('/auth');
             },
             isImportant: true,
           ),
@@ -361,27 +338,23 @@ class HomePage extends StatelessWidget {
   void _showLoginMessage(BuildContext context, String message) {
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Login Required', style: TextStyle(fontFamily: 'Oswald')),
-          content: Text(message, style: const TextStyle(fontFamily: 'Oswald')),
-          actions: <Widget>[
-            TextButton(
-              child: Text('OK', style: TextStyle(color: Theme.of(dialogContext).primaryColor, fontFamily: 'Oswald')),
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop(); // Close current dialog
-                _showLoginDialog(context); // Open login dialog
-              },
-              child: const Text('Login Now'),
-            ),
-          ],
-        );
-      },
+      builder: (context) => AlertDialog(
+        title: const Text('Login Required'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.of(context, rootNavigator: true).pushReplacementNamed('/auth');
+            },
+            child: const Text('Login'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -425,19 +398,7 @@ class HomePage extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 20),
-                  TextFormField(
-                    controller: usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Username',
-                      prefixIcon: Icon(Icons.person),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your username';
-                      }
-                      return null;
-                    },
-                  ),
+                  // Login removed - using AuthPage instead
                   const SizedBox(height: 15),
                   TextFormField(
                     controller: passwordController,
