@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "572126760838",
+    "project_id": "paramountclasses-78104",
+    "storage_bucket": "paramountclasses-78104.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572126760838:android:5415826b61c227b28de607",
+        "android_client_info": {
+          "package_name": "com.example.paramount"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "572126760838-PLACEHOLDER.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.paramount",
+            "certificate_hash": "8b885ab9b28bd92ac7c3c9cba84c9dc4d223579f"
+          }
+        },
+        {
+          "client_id": "572126760838-PLACEHOLDER.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBU9L2TVjwqvd342KdhDGX_ueWtU_saiSI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "572126760838-PLACEHOLDER.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

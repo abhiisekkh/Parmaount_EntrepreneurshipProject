@@ -238,6 +238,33 @@ try {
     email: 'test@example.com',
     password: 'password123',
   );
+
+## Step 10: Deploy Firestore Rules (CLI)
+
+Once you've updated `firestore.rules` in the repo (the file at the project root), deploy it with the Firebase CLI:
+
+1. Login to Firebase:
+
+```bash
+firebase login
+```
+
+2. Select or initialize your project in the current folder (only needed once):
+
+```bash
+firebase use --add
+```
+
+3. Deploy only Firestore rules:
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+This will push the `firestore.rules` file from your local project to the selected Firebase project.
+
+Important: The version of the rules in this repo is permissive and intended for development. Before deploying to production, remove the fallback `match /{document=**}` rule and enforce role checks and data validation.
+
   print('Authentication working!');
 } catch (e) {
   print('Authentication error: $e');

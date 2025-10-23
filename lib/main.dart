@@ -1,19 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:paramount/HomePage.dart';
-import 'package:paramount/StudentHomePage.dart';
-import 'package:paramount/TeacherHomePage.dart';
-import 'package:paramount/add_student_page.dart';
+import 'package:paramount/add_student_page.dart' as legacy;
 import 'package:paramount/FacultyPage.dart';
 import 'package:paramount/Attendance.dart';
 import 'package:paramount/StudentAttendancePage.dart';
 import 'package:paramount/student_list_page.dart';
-import 'package:paramount/auth/auth_page.dart';
-import 'package:paramount/admin_home.dart';
 import 'package:paramount/admin/admin_students_page.dart';
 import 'package:paramount/admin/admin_faculty_page.dart';
 import 'package:paramount/admin/admin_courses_page.dart';
+import 'package:paramount/admin/add_faculty_page.dart';
+import 'package:paramount/admin/add_student_page.dart';
+import 'package:paramount/ui/modern_splash_screen.dart';
+import 'package:paramount/ui/modern_auth_page.dart';
+import 'package:paramount/ui/registration_page.dart';
+import 'package:paramount/ui/modern_admin_dashboard.dart';
+import 'package:paramount/ui/modern_student_dashboard.dart';
+import 'package:paramount/ui/modern_teacher_dashboard.dart';
+import 'package:paramount/ui/database_viewer.dart';
+import 'package:paramount/debug_auth_page.dart';
+import 'package:paramount/config/firebase_config.dart';
+import 'package:paramount/services/notification_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  await Firebase.initializeApp();
+  
+  // Initialize Firebase configuration
+  await FirebaseConfig.initialize();
+  
+  // Initialize notification service
+  await NotificationService.initialize();
+  
   runApp(const MyApp());
 }
 
@@ -26,300 +47,283 @@ class MyApp extends StatelessWidget {
       title: 'Paramount Institute',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        useMaterial3: true,
         primarySwatch: Colors.deepPurple,
-        primaryColor: Colors.deepPurple.shade700,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.deepPurple)
-            .copyWith(secondary: Colors.amberAccent.shade400),
-
-        // Font Family ko 'Oswald' set kiya, jaisa ki pubspec.yaml mein define kiya hai
-        fontFamily: 'Oswald',
-
-        // Global Text Theme for better design consistency
-        textTheme: TextTheme(
-          displayLarge: TextStyle(
-              fontSize: 96,
-              fontWeight: FontWeight.w300,
-              letterSpacing: -1.5,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade900),
-          displayMedium: TextStyle(
-              fontSize: 60,
-              fontWeight: FontWeight.w300,
-              letterSpacing: -0.5,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade900),
-          displaySmall: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade900),
-          headlineLarge: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade900),
-          headlineMedium: TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.25,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade900),
-          headlineSmall: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple
-                  .shade800), // Slightly adjusted size for better hierarchy
-          titleLarge: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.15,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade900), // Slightly adjusted size
-          titleMedium: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.15,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade800), // Slightly adjusted size
-          titleSmall: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.1,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade700), // Slightly adjusted size
-          bodyLarge: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.5,
-              fontFamily: 'Oswald',
-              color: Colors.grey.shade800), // Slightly adjusted size
-          bodyMedium: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.25,
-              fontFamily: 'Oswald',
-              color: Colors.grey.shade700), // Slightly adjusted size
-          bodySmall: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.4,
-              fontFamily: 'Oswald',
-              color: Colors.grey.shade600), // Slightly adjusted size
-          labelLarge: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.25,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade700), // Adjusted weight
-          labelMedium: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 1.5,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade600), // Adjusted size and weight
-          labelSmall: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 1.5,
-              fontFamily: 'Oswald',
-              color: Colors.deepPurple.shade500), // Adjusted size
-        ).apply(
-          bodyColor: Colors.deepPurple.shade900, // Default text color
-          displayColor:
-              Colors.deepPurple.shade900, // Default display text color
+        primaryColor: const Color(0xFF6366F1), // Indigo-500
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6366F1),
+          primary: const Color(0xFF6366F1), // Indigo-500
+          secondary: const Color(0xFF10B981), // Emerald-500
+          tertiary: const Color(0xFFF59E0B), // Amber-500
+          background: const Color(0xFFFAFAFA), // Gray-50
+          surface: Colors.white,
+          surfaceVariant: const Color(0xFFF8FAFC), // Slate-50
+          outline: const Color(0xFFE2E8F0), // Slate-200
+          onPrimary: Colors.white,
+          onSecondary: Colors.white,
+          onSurface: const Color(0xFF1E293B), // Slate-800
+          onBackground: const Color(0xFF1E293B), // Slate-800
         ),
-
-        // AppBar Theme
-        appBarTheme: AppBarTheme(
-          backgroundColor:
-              Colors.deepPurple.shade700, // AppBar background color
-          foregroundColor: Colors.white, // AppBar text/icon color
-          elevation: 6, // AppBar par thoda zyada shadow
-          centerTitle: true, // Title center mein
-          titleTextStyle: const TextStyle(
-            fontSize: 24, // Thoda bada title
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Oswald',
-            color: Colors.white, // Ensure title text color is white
+        scaffoldBackgroundColor: const Color(0xFFFAFAFA), // Gray-50
+        fontFamily: GoogleFonts.inter().fontFamily,
+        textTheme: GoogleFonts.interTextTheme(
+          Theme.of(context).textTheme,
+        ).copyWith(
+          // Display styles for large headers
+          displayLarge: GoogleFonts.inter(
+            fontSize: 57,
+            fontWeight: FontWeight.w800,
+            color: const Color(0xFF0F172A), // Slate-900
+            letterSpacing: -1.0,
           ),
-          iconTheme: const IconThemeData(
-              color: Colors.white,
-              size: 26), // AppBar icons white aur thoda bada
-          actionsIconTheme: const IconThemeData(
-              color: Colors.white,
-              size: 26), // Actions icons bhi white aur bade
-        ),
-
-        // ElevatedButton Theme
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepPurple.shade600, // Button background
-            foregroundColor: Colors.white, // Button text color
-            padding: const EdgeInsets.symmetric(
-                horizontal: 28, vertical: 16), // Thoda zyada padding
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                  18), // Thode zyada rounded corners for buttons
-            ),
-            textStyle: const TextStyle(
-              fontSize: 19, // Thoda bada text
-              fontWeight: FontWeight.w600,
-              fontFamily: 'Oswald',
-            ),
-            elevation: 6, // Buttons par thoda zyada elevation
+          displayMedium: GoogleFonts.inter(
+            fontSize: 45,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF0F172A),
+            letterSpacing: -0.5,
+          ),
+          displaySmall: GoogleFonts.inter(
+            fontSize: 36,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF0F172A),
+          ),
+          // Headline styles
+          headlineLarge: GoogleFonts.inter(
+            fontSize: 32,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF1E293B),
+            letterSpacing: -0.5,
+          ),
+          headlineMedium: GoogleFonts.inter(
+            fontSize: 28,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF1E293B),
+            letterSpacing: -0.25,
+          ),
+          headlineSmall: GoogleFonts.inter(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF334155),
+          ),
+          // Title styles
+          titleLarge: GoogleFonts.inter(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF334155),
+          ),
+          titleMedium: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF475569),
+            letterSpacing: 0.1,
+          ),
+          titleSmall: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF64748B),
+            letterSpacing: 0.1,
+          ),
+          // Body styles
+          bodyLarge: GoogleFonts.inter(
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFF475569),
+            letterSpacing: 0.1,
+          ),
+          bodyMedium: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFF64748B),
+            letterSpacing: 0.1,
+          ),
+          bodySmall: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFF94A3B8),
+            letterSpacing: 0.5,
+          ),
+          // Label styles
+          labelLarge: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF475569),
+            letterSpacing: 0.1,
+          ),
+          labelMedium: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF64748B),
+            letterSpacing: 0.5,
+          ),
+          labelSmall: GoogleFonts.inter(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF94A3B8),
+            letterSpacing: 0.5,
           ),
         ),
-
-        // TextButton Theme
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.deepPurple.shade700, // TextButton ka color
-            textStyle: const TextStyle(
-              fontSize: 17, // Thoda bada text
-              fontWeight: FontWeight.w500,
-              fontFamily: 'Oswald',
-            ),
-          ),
-        ),
-
-        // Card Theme
+        // Modern card theme with subtle shadows
         cardTheme: CardThemeData(
-          elevation: 10, // Cards par aur zyada shadow
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-                22), // Aur zyada rounded corners for cards
+            borderRadius: BorderRadius.circular(16),
           ),
-          margin: const EdgeInsets.all(
-              14), // Card ke charo taraf thoda zyada margin
-          color: Colors.white, // Default card background white
-        ),
-
-        // Input Decoration Theme for TextFields
-        inputDecorationTheme: InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(15), // Rounded borders for text fields
-            borderSide: BorderSide.none, // No default border line
-          ),
-          filled: true,
-          // ignore: deprecated_member_use
-          fillColor: Colors.deepPurple.shade50
-              .withOpacity(0.85), // Light fill color, thoda zyada opaque
-          contentPadding: const EdgeInsets.symmetric(
-              vertical: 20, horizontal: 22), // Thoda zyada padding
-          labelStyle: TextStyle(
-              color: Colors.deepPurple.shade700,
-              fontFamily: 'Oswald',
-              fontSize: 16), // Font size adjusted
-          hintStyle: TextStyle(
-              color: Colors.deepPurple.shade300,
-              fontFamily: 'Oswald',
-              fontSize: 16), // Font size adjusted
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(
-                color: Colors.deepPurple.shade400,
-                width: 2.5), // Thoda mota border
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(
-                color: Colors.deepPurple.shade200,
-                width: 1.5), // Thoda mota border
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(color: Colors.red, width: 1.5),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(
-                color: Colors.red, width: 3), // Aur mota error border
-          ),
-        ),
-
-        // Dialog Theme for custom alert/info boxes
-        dialogTheme: DialogThemeData(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(25), // Aur zyada rounded dialogs
-          ),
-          titleTextStyle: TextStyle(
-            fontSize: 24, // Bada title
-            fontWeight: FontWeight.bold,
-            color: Colors.deepPurple.shade900,
-            fontFamily: 'Oswald',
-          ),
-          contentTextStyle: TextStyle(
-            fontSize: 17, // Bada content text
-            color: Colors.grey.shade700,
-            fontFamily: 'Oswald',
-          ),
-        ),
-
-        // Icon Theme
-        iconTheme: IconThemeData(
-          color: Colors.deepPurple.shade700, // Default icon color
-          size: 26, // Thoda bada icons
-        ),
-
-        // Primary Icon Theme (e.g., Drawer header icons, etc.)
-        primaryIconTheme: const IconThemeData(
+          elevation: 0,
           color: Colors.white,
-          size: 28,
+          shadowColor: const Color(0xFF64748B).withOpacity(0.1),
+          surfaceTintColor: Colors.transparent,
+          margin: const EdgeInsets.all(8),
         ),
-
-        // Floating Action Button Theme
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: Colors.amberAccent.shade400,
-          foregroundColor: Colors.deepPurple.shade900,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18), // Thode zyada rounded FAB
-          ),
-          elevation: 8, // FAB par zyada elevation
-          extendedTextStyle: const TextStyle(
+        // Modern app bar theme
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: const Color(0xFF1E293B),
+          elevation: 0,
+          scrolledUnderElevation: 1,
+          centerTitle: true,
+          titleTextStyle: GoogleFonts.inter(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            fontFamily: 'Oswald',
+            color: const Color(0xFF1E293B),
+            letterSpacing: -0.25,
+          ),
+          iconTheme: const IconThemeData(
+            color: Color(0xFF475569),
+            size: 24,
+          ),
+          actionsIconTheme: const IconThemeData(
+            color: Color(0xFF475569),
+            size: 24,
           ),
         ),
-
-        // Bottom Navigation Bar Theme (agar future mein use ho)
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: Colors.deepPurple.shade800,
-          selectedItemColor: Colors.amberAccent.shade400,
-          unselectedItemColor: Colors.white70,
-          selectedLabelStyle: const TextStyle(
-              fontFamily: 'Oswald', fontWeight: FontWeight.bold),
-          unselectedLabelStyle: const TextStyle(fontFamily: 'Oswald'),
-          elevation: 10,
+        // Modern floating action button
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: const Color(0xFF6366F1),
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 4,
+          focusElevation: 6,
+          hoverElevation: 6,
+          highlightElevation: 8,
         ),
-
-        // Divider Theme
-        dividerTheme: DividerThemeData(
-          color: Colors.deepPurple.shade100,
-          thickness: 1.5,
-          space: 20,
+        // Modern input decoration
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xFFF8FAFC),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF6366F1), width: 2),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFEF4444), width: 2),
+          ),
+          labelStyle: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: const Color(0xFF64748B),
+          ),
+          hintStyle: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFF94A3B8),
+          ),
+        ),
+        // Modern elevated button theme
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF6366F1),
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: const Color(0xFFE2E8F0),
+            disabledForegroundColor: const Color(0xFF94A3B8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            textStyle: GoogleFonts.inter(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ),
+        // Modern text button theme
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: const Color(0xFF6366F1),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            textStyle: GoogleFonts.inter(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ),
+        // Modern outlined button theme
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: const Color(0xFF6366F1),
+            side: const BorderSide(color: Color(0xFF6366F1)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            textStyle: GoogleFonts.inter(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ),
+        // Modern divider theme
+        dividerTheme: const DividerThemeData(
+          color: Color(0xFFE2E8F0),
+          thickness: 1,
+          space: 1,
         ),
       ),
       // App ke sabhi routes define kiye hain
-      initialRoute: '/home',
+      initialRoute: '/',
       routes: {
+        '/': (context) => const ModernSplashScreen(),
         '/home': (context) => const HomePage(),
-        '/student_home': (context) => const StudentHomePage(),
-        '/teacher_home': (context) => const TeacherHomePage(),
-        '/add_student': (context) => const AddStudentPage(),
+        '/student_home': (context) => const ModernStudentHomePage(),
+        '/teacher_home': (context) => const ModernTeacherHomePage(),
+        '/add_student': (context) => const legacy.AddStudentPage(),
         '/student_list': (context) => const StudentListPage(),
         '/faculty': (context) => const FacultyPage(),
         '/attendance': (context) => const AttendancePage(),
         '/student_attendance': (context) => const StudentAttendancePage(),
-        '/auth': (context) => const AuthPage(),
-        '/admin_home': (context) => const AdminHomePage(),
+        '/auth': (context) => const ModernAuthPage(),
+        '/register': (context) => const RegistrationPage(),
+        '/admin_home': (context) => const ModernAdminHomePage(),
         '/admin/students': (context) => const AdminStudentsPage(),
         '/admin/faculty': (context) => const AdminFacultyPage(),
         '/admin/courses': (context) => const AdminCoursesPage(),
+        '/admin/attendance': (context) => const AttendancePage(),
+        '/admin/faculty/add': (context) => const AddFacultyPage(),
+        '/admin/students/add': (context) => const AddStudentPage(),
+        '/database_viewer': (context) => const DatabaseViewer(),
+        '/debug_auth': (context) => const DebugAuthPage(),
       },
     );
   }

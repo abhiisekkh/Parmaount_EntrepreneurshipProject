@@ -10,13 +10,10 @@ class AttendanceTestPage extends StatefulWidget {
 }
 
 class _AttendanceTestPageState extends State<AttendanceTestPage> {
-  final AttendanceService _attendanceService = AttendanceService();
   final TextEditingController _studentIdController = TextEditingController();
   final TextEditingController _studentNameController = TextEditingController();
   final TextEditingController _subjectController = TextEditingController();
   bool _isPresent = true;
-  String? _selectedDate;
-
   @override
   void initState() {
     super.initState();
@@ -24,7 +21,6 @@ class _AttendanceTestPageState extends State<AttendanceTestPage> {
     _studentIdController.text = 'TEST001';
     _studentNameController.text = 'Test Student';
     _subjectController.text = 'Mathematics';
-    _selectedDate = DateTime.now().toString().split(' ')[0];
     
     // Initialize the attendance collection
     _initializeAttendance();
@@ -123,9 +119,10 @@ class _AttendanceTestPageState extends State<AttendanceTestPage> {
                     Text('Recent Attendance Records',
                         style: Theme.of(context).textTheme.titleLarge),
                     const SizedBox(height: 16),
-                    StreamBuilder<List<AttendanceModel>>(
-                      stream: _attendanceService.getStudentAttendance(
-                          _studentIdController.text, _subjectController.text),
+                    FutureBuilder<List<AttendanceModel>>(
+                      future: AttendanceService.getStudentAttendance(
+                          studentId: _studentIdController.text, 
+                          subject: _subjectController.text),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
@@ -178,8 +175,9 @@ class _AttendanceTestPageState extends State<AttendanceTestPage> {
                         style: Theme.of(context).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     FutureBuilder<AttendanceStats>(
-                      future: _attendanceService.getStudentAttendanceStats(
-                          _studentIdController.text, _subjectController.text),
+                      future: AttendanceService.getStudentAttendanceStats(
+                          studentId: _studentIdController.text, 
+                          subject: _subjectController.text),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
@@ -247,7 +245,7 @@ class _AttendanceTestPageState extends State<AttendanceTestPage> {
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      await _attendanceService.markAttendance(
+      await AttendanceService.markAttendance(
         studentId: _studentIdController.text,
         studentName: _studentNameController.text,
         subject: _subjectController.text,
@@ -289,7 +287,7 @@ class _AttendanceTestPageState extends State<AttendanceTestPage> {
 
   Future<void> _deleteAttendance(String attendanceId) async {
     try {
-      await _attendanceService.deleteAttendance(attendanceId);
+      await AttendanceService.deleteAttendance(attendanceId);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -312,7 +310,7 @@ class _AttendanceTestPageState extends State<AttendanceTestPage> {
 
   Future<void> _initializeAttendance() async {
     try {
-      await _attendanceService.initializeAttendanceCollection();
+      // Attendance system is initialized automatically with Firebase
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

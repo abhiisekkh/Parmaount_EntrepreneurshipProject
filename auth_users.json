@@ -1,0 +1,31 @@
+{"users": [
+{
+  "localId": "Nx8HQAD4N1M9wGd5KT13RAiUYL33",
+  "email": "abba23cs@cmrit.ac.in",
+  "emailVerified": false,
+  "passwordHash": "jr1jCCV7YfTxAIhUqVNqnZjpKWT3/YA9q4Sb3jIItQMVDJNvtkbQInQAPN3AeSigL5bTOVGRHJBrZn/JVS8Fmw==",
+  "salt": "MzLSOJUifo4tyQ==",
+  "lastSignedInAt": "1759507949277",
+  "createdAt": "1759507104029",
+  "providerUserInfo": []
+},
+{
+  "localId": "vWUpvwNEoMNNx0vpAlVNA4joEdd2",
+  "email": "abhisekh99baniya@gmail.com",
+  "emailVerified": false,
+  "passwordHash": "JtJJDnOtDVrJFE9PjkrjPTDTSioL2qmG7vBMjYvlm6auqlLsc9nN+hJmkKR4RFp9Xw9mmY4SF6TvywHYoatFjg==",
+  "salt": "wLDSN+p58HCmPg==",
+  "lastSignedInAt": "1759508341132",
+  "createdAt": "1759508341132",
+  "providerUserInfo": []
+},
+{
+  "localId": "vd4zcnhgnmMIqv8Dz8wwHazhek32",
+  "email": "abhisek0baniya@gmail.com",
+  "emailVerified": false,
+  "passwordHash": "wuTKfx+/4U25YeL4lctlfVGYnD2O3dP74oGoG8TN2LywKdTReeo0AKzN9TlA9sxPMhL0xHqZjWlkthA+8eCBaQ==",
+  "salt": "uGADofhgfomSRQ==",
+  "lastSignedInAt": "1756569006758",
+  "createdAt": "1756562513836",
+  "providerUserInfo": []
+}]}

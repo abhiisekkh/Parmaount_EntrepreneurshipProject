@@ -47,34 +47,47 @@ class _StudentAttendancePageState extends State<StudentAttendancePage> {
     double attendancePercentage = totalClasses > 0 ? (presentCount / totalClasses) * 100 : 0.0;
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text('My Attendance'),
       ),
-      body: Column(
-        children: [
-          // Filter and Summary Section
-          _buildFilterAndSummary(context, totalClasses, presentCount, absentCount, lateCount, attendancePercentage),
-          const Divider(height: 1, thickness: 1),
-          // Attendance History List
-          Expanded(
-            child: filteredRecords.isEmpty
-                ? Center(
-              child: Text(
-                'No attendance records found for selected criteria.',
-                style: TextStyle(fontSize: 16, color: Colors.grey.shade600, fontFamily: 'Oswald'),
-                textAlign: TextAlign.center,
-              ),
-            )
-                : ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: filteredRecords.length,
-              itemBuilder: (context, index) {
-                final record = filteredRecords[index];
-                return _buildAttendanceRecordCard(context, record);
-              },
-            ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF6C63FF), Color(0xFFB993FF), Color(0xFFF5F6FA)],
           ),
-        ],
+        ),
+        child: Column(
+          children: [
+            _buildFilterAndSummary(context, totalClasses, presentCount, absentCount, lateCount, attendancePercentage),
+            const Divider(height: 1, thickness: 1),
+            // Attendance History List
+            Expanded(
+              child: filteredRecords.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No attendance records found for selected criteria.',
+                        style: TextStyle(fontSize: 16, color: Colors.grey.shade600, fontFamily: 'Oswald'),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16.0),
+                      itemCount: filteredRecords.length,
+                      itemBuilder: (context, index) {
+                        final record = filteredRecords[index];
+                        return _buildAttendanceRecordCard(context, record);
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -88,7 +101,7 @@ class _StudentAttendancePageState extends State<StudentAttendancePage> {
         children: [
           // Course Filter Dropdown
           DropdownButtonFormField<String>(
-            value: _selectedFilterCourse,
+            initialValue: _selectedFilterCourse,
             decoration: const InputDecoration(
               labelText: 'Filter by Course',
               prefixIcon: Icon(Icons.filter_list),

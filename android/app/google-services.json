@@ -12,7 +12,20 @@
           "package_name": "com.example.paramount"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "572126760838-abc123def456ghi789jkl012mno345pq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.paramount",
+            "certificate_hash": "8b885ab9b28bd92ac7c3c9cba84c9dc4d223579f"
+          }
+        },
+        {
+          "client_id": "572126760838-web123def456ghi789jkl012mno345web.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBU9L2TVjwqvd342KdhDGX_ueWtU_saiSI"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "572126760838-web123def456ghi789jkl012mno345web.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

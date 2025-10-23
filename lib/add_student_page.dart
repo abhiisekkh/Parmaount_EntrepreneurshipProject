@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'services/test_data_service.dart';
+import 'services/user_service.dart';
+import 'models/user_model.dart';
 
 class AddStudentPage extends StatefulWidget {
   const AddStudentPage({super.key});
@@ -17,40 +18,35 @@ class _AddStudentPageState extends State<AddStudentPage> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _courseController = TextEditingController();
   final TextEditingController _semesterController = TextEditingController();
-
-  // Loading state ko dummy rakha gaya hai
   bool _isLoading = false;
 
-  final TestDataService _testDataService = TestDataService();
-
-  // Add student using TestDataService
   Future<void> _addStudent() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
-
       try {
-        // Generate a unique ID for the new student
-        String newId = (DateTime.now().millisecondsSinceEpoch % 10000).toString();
-        
-        _testDataService.addStudent({
-          'id': newId,
-          'name': _nameController.text,
-          'email': _emailController.text,
-          'studentId': _usnController.text,
-          'phoneNumber': _phoneNumberController.text,
-          'course': _courseController.text,
-          'semester': int.tryParse(_semesterController.text),
-          'attendance': {},
-        });
+        // Create student using UserService with Firebase
+        await UserService().createUser(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          name: _nameController.text.trim(),
+          role: UserRole.student,
+          phoneNumber: _phoneNumberController.text.trim(),
+          studentId: _usnController.text.trim(),
+          course: _courseController.text.trim(),
+          semester: int.tryParse(_semesterController.text),
+        );
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Student ${_nameController.text} added successfully!')),
+            SnackBar(
+              content: Text('Student ${_nameController.text} added successfully to Firebase!'),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 3),
+            ),
           );
-
-          // Clear all fields after success
+          // Clear form
           _nameController.clear();
           _usnController.clear();
           _emailController.clear();
@@ -90,109 +86,128 @@ class _AddStudentPageState extends State<AddStudentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text(
           "Add New Student",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+        ),
+        centerTitle: true,
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF6C63FF), Color(0xFFB993FF), Color(0xFFF5F6FA)],
           ),
         ),
-        backgroundColor: Colors.indigo.shade700,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 4.0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildTextFormField(
-                controller: _nameController,
-                labelText: 'Student Name',
-                icon: Icons.person,
-                validator: (value) => value!.isEmpty ? 'Please enter student name' : null,
-              ),
-              const SizedBox(height: 16.0),
-              _buildTextFormField(
-                controller: _usnController,
-                labelText: 'USN (e.g., 1BM19CS01)',
-                icon: Icons.badge,
-                validator: (value) => value!.isEmpty ? 'Please enter USN' : null,
-              ),
-              const SizedBox(height: 16.0),
-              _buildTextFormField(
-                controller: _emailController,
-                labelText: 'Email',
-                icon: Icons.email,
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter email';
-                  }
-                  if (!value.contains('@')) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              _buildTextFormField(
-                controller: _passwordController,
-                labelText: 'Password',
-                icon: Icons.lock,
-                isPassword: true,
-                validator: (value) => value!.isEmpty ? 'Please enter password' : null,
-              ),
-              const SizedBox(height: 16.0),
-              _buildTextFormField(
-                controller: _phoneNumberController,
-                labelText: 'Phone Number',
-                icon: Icons.phone,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 16.0),
-              _buildTextFormField(
-                controller: _courseController,
-                labelText: 'Course',
-                icon: Icons.school,
-              ),
-              const SizedBox(height: 16.0),
-              _buildTextFormField(
-                controller: _semesterController,
-                labelText: 'Semester',
-                icon: Icons.calendar_today,
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 30.0),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: _addStudent,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.indigo,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              elevation: 10,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildTextFormField(
+                        controller: _nameController,
+                        labelText: 'Student Name',
+                        icon: Icons.person,
+                        validator: (value) => value!.isEmpty ? 'Please enter student name' : null,
                       ),
-                      child: const Text(
-                        'Add Student',
-                        style: TextStyle(fontSize: 18),
+                      const SizedBox(height: 16.0),
+                      _buildTextFormField(
+                        controller: _usnController,
+                        labelText: 'USN (e.g., 1BM19CS01)',
+                        icon: Icons.badge,
+                        validator: (value) => value!.isEmpty ? 'Please enter USN' : null,
                       ),
-                    ),
-            ],
+                      const SizedBox(height: 16.0),
+                      _buildTextFormField(
+                        controller: _emailController,
+                        labelText: 'Email',
+                        icon: Icons.email,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter email';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16.0),
+                      _buildTextFormField(
+                        controller: _passwordController,
+                        labelText: 'Password',
+                        icon: Icons.lock,
+                        isPassword: true,
+                        validator: (value) => value!.isEmpty ? 'Please enter password' : null,
+                      ),
+                      const SizedBox(height: 16.0),
+                      _buildTextFormField(
+                        controller: _phoneNumberController,
+                        labelText: 'Phone Number',
+                        icon: Icons.phone,
+                        keyboardType: TextInputType.phone,
+                      ),
+                      const SizedBox(height: 16.0),
+                      _buildTextFormField(
+                        controller: _courseController,
+                        labelText: 'Course',
+                        icon: Icons.school,
+                      ),
+                      const SizedBox(height: 16.0),
+                      _buildTextFormField(
+                        controller: _semesterController,
+                        labelText: 'Semester',
+                        icon: Icons.calendar_today,
+                        keyboardType: TextInputType.number,
+                      ),
+                      const SizedBox(height: 30.0),
+                      _isLoading
+                          ? const Center(child: CircularProgressIndicator())
+                          : ElevatedButton(
+                              onPressed: _addStudent,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontFamily: 'Oswald',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              child: const Text(
+                                'Add Student',
+                              ),
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  // Helper method for a consistent TextFormField style
   Widget _buildTextFormField({
     required TextEditingController controller,
     required String labelText,
@@ -207,20 +222,7 @@ class _AddStudentPageState extends State<AddStudentPage> {
       obscureText: isPassword,
       decoration: InputDecoration(
         labelText: labelText,
-        prefixIcon: Icon(icon, color: Colors.indigo),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.grey.shade400),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12.0),
-          borderSide: const BorderSide(color: Colors.indigo, width: 2.0),
-        ),
-        filled: true,
-        fillColor: Colors.grey.shade50,
+        prefixIcon: Icon(icon, color: Theme.of(context).primaryColor),
       ),
       validator: validator,
     );

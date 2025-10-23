@@ -31,8 +31,8 @@ class UserModel {
   
   // Additional fields for teachers
   final String? teacherId;
-  final List<String>? subjectsTaught;
-  final List<String>? classesAssigned;
+  final List<String> subjectsTaught;
+  final List<String> classesAssigned;
 
   UserModel({
     required this.uid,
@@ -48,8 +48,8 @@ class UserModel {
     this.semester,
     this.attendance,
     this.teacherId,
-    this.subjectsTaught,
-    this.classesAssigned,
+    this.subjectsTaught = const <String>[],
+    this.classesAssigned = const <String>[],
   });
 
   // Convert model to JSON for storing in Firestore
@@ -66,10 +66,12 @@ class UserModel {
       'studentId': studentId,
       'course': course,
       'semester': semester,
-      'attendance': attendance ?? {},
+      // Ensure attendance (and any nested maps) contain only Firestore-serializable
+      // values: primitives, Timestamps, Lists and Maps of primitives/Timestamps.
+      'attendance': _sanitizeMapForFirestore(attendance),
       'teacherId': teacherId,
-      'subjectsTaught': subjectsTaught ?? [],
-      'classesAssigned': classesAssigned ?? [],
+      'subjectsTaught': subjectsTaught,
+      'classesAssigned': classesAssigned,
     };
   }
 
@@ -97,13 +99,65 @@ class UserModel {
       semester: data['semester'] != null ? int.tryParse(data['semester'].toString()) : null,
       attendance: data['attendance'] as Map<String, dynamic>?,
       teacherId: data['teacherId']?.toString(),
-      subjectsTaught: data['subjectsTaught'] != null 
-          ? List<String>.from(data['subjectsTaught'])
-          : null,
-      classesAssigned: data['classesAssigned'] != null 
-          ? List<String>.from(data['classesAssigned'])
-          : null,
+      subjectsTaught: _safeListFromFirestore(data['subjectsTaught']),
+      classesAssigned: _safeListFromFirestore(data['classesAssigned']),
     );
+  }
+  
+  // Helper method to safely convert Firestore lists to List<String>
+  static List<String> _safeListFromFirestore(dynamic data) {
+    if (data == null) return <String>[];
+    if (data is! List) return <String>[];
+    
+    try {
+      return data
+          .map((e) => e?.toString() ?? '')
+          .where((s) => s.isNotEmpty)
+          .toList();
+    } catch (e) {
+      print('Error converting list from Firestore: $e');
+      return <String>[];
+    }
+  }
+
+  // Deep sanitize a map so it only contains Firestore-serializable values.
+  // Converts DateTime -> Timestamp, leaves Timestamp as-is, and recursively
+  // sanitizes nested Maps and Lists. Non-primitive values are converted to
+  // their string representation as a fallback.
+  static Map<String, dynamic> _sanitizeMapForFirestore(dynamic input) {
+    if (input == null) return <String, dynamic>{};
+    if (input is! Map) return <String, dynamic>{};
+
+    final Map<String, dynamic> out = {};
+    try {
+      input.forEach((key, value) {
+        final k = key?.toString() ?? '';
+        if (k.isEmpty) return;
+        out[k] = _sanitizeValue(value);
+      });
+    } catch (e) {
+      print('Error sanitizing map for Firestore: $e');
+      return <String, dynamic>{};
+    }
+    return out;
+  }
+
+  static dynamic _sanitizeValue(dynamic v) {
+    try {
+      if (v == null) return null;
+      if (v is Timestamp) return v;
+      if (v is DateTime) return Timestamp.fromDate(v);
+      if (v is num || v is bool || v is String) return v;
+      if (v is Map) return _sanitizeMapForFirestore(v);
+      if (v is List) {
+        return v.map((e) => _sanitizeValue(e)).toList();
+      }
+      // Fallback: convert to string
+      return v.toString();
+    } catch (e) {
+      print('Error sanitizing value for Firestore: $e');
+      return v?.toString();
+    }
   }
 
   // Create a copy of the user with updated fields

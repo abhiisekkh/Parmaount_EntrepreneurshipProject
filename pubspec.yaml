@@ -33,6 +33,8 @@ dependencies:
   firebase_messaging: ^14.7.6 # Push notifications ke liye
   firebase_analytics: ^10.7.2 # App usage analytics ke liye
 
+
+
   # Cloudinary for file storage - Firebase Storage ki jagah.
   cloudinary_public: ^0.21.0 # Cloudinary API se interact karne ke liye
 
@@ -47,6 +49,20 @@ dependencies:
 
   # Circular progress bar aur indicators ke liye (StudentAttendancePage mein use kiya gaya).
   percent_indicator: ^4.2.3 # Ye dependency add ki hai
+  google_fonts: ^6.3.1
+  
+  # Modern UI components and animations
+  flutter_staggered_animations: ^1.1.1  # Beautiful staggered animations
+  shimmer: ^3.0.0  # Loading shimmer effects
+  lottie: ^3.1.2  # Lottie animations
+  flutter_svg: ^2.0.10+1  # SVG support
+  cached_network_image: ^3.3.1  # Optimized image loading
+  fl_chart: ^0.69.0  # Beautiful charts for analytics
+  animate_do: ^3.3.4  # Easy animations
+  glassmorphism: ^3.0.0  # Modern glassmorphism effects
+  card_swiper: ^3.0.1  # Beautiful card swipers
+  flutter_animate: ^4.5.0  # Advanced animations
+  get_it: ^7.6.4  # Service locator for dependency injection
 
 dev_dependencies:
   flutter_test:
